@@ -222,7 +222,7 @@ function BackendCoinsUpdate()
 				}
 			}
 
-			else if ($coin->symbol == 'VEGI' || $coin->rpcencoding == 'VEGI')
+			else if ($coin->symbol == 'TEST' || $coin->rpcencoding == 'TEST')
 			{
 				if($template && isset($template['coinbasetxn']))
 				{
