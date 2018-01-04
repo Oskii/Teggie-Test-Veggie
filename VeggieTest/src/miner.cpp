@@ -191,40 +191,28 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
 
     // Create coinbase transaction.
     CMutableTransaction coinbaseTx;
-    CMutableTransaction developerTx;//
-
     coinbaseTx.vin.resize(1);
-    developerTx.vin.resize(1);//
-
     coinbaseTx.vin[0].prevout.SetNull();
-    coinbaseTx.vout.resize(1);
+    //coinbaseTx.vout.resize(1);
     
-    developerTx.vin[0].prevout.SetNull();//
-    developerTx.vout.resize(1);//
-
+    coinbaseTx.vout.resize(2); // 2 outputs, 1 for us, 1 for them.
     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
 
     std::string developerWallet = "KJpyfLPSN9BmzH27otc95ApRM6VV4gSubv";
     CTxDestination developerWalletDest = CBitcoinAddress(developerWallet).Get(); 
     CScript developerCScript = GetScriptForDestination(developerWalletDest);
 
-    developerTx.vout[0].scriptPubKey = developerCScript;//
+    coinbaseTx.vout[1].scriptPubKey = developerCScript;
 
     //coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
 
     coinbaseTx.vout[0].nValue = 0.8 * (nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus()));
-    developerTx.vout[0].nValue = 0.2 * (nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus()));//
+    coinbaseTx.vout[1].nValue = 0.2 * (nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus()));
 
 
 
     coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
-
-    developerTx.vin[0].scriptSig = CScript() << nHeight << OP_0;//this might not work?
-    std::cout << "Hello Barns" << std::endl;
-    pblock->vtx.resize(2);
-    pblock->vtx[1] = MakeTransactionRef(std::move(developerTx));//
-
     pblocktemplate->vchCoinbaseCommitment = GenerateCoinbaseCommitment(*pblock, pindexPrev, chainparams.GetConsensus());
     pblocktemplate->vTxFees[0] = -nFees;
 
