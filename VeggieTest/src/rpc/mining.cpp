@@ -608,7 +608,7 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
 
         if (tx.IsCoinBase()) {
             // Push founders' reward if it is required
-            if (pblock->vtx[0].vout.size() > 1) {
+            if (pblock->vtx[0]->vout.size() > 1) {
                 entry.push_back(Pair("minersreward", (int64_t)tx.vout[0].nValue));
                 entry.push_back(Pair("foundersreward", (int64_t)tx.vout[1].nValue));
                 entry.push_back(Pair("foundersaddress", tx.vout[1].scriptSig));
@@ -695,7 +695,7 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
         result.push_back(Pair("coinbasetxn", txCoinbase));
     } else {
         result.push_back(Pair("coinbaseaux", aux));
-        result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0].GetValueOut()));
+        result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0]->GetValueOut()));
     }
     result.push_back(Pair("longpollid", chainActive.Tip()->GetBlockHash().GetHex() + i64tostr(nTransactionsUpdatedLast)));
     result.push_back(Pair("target", hashTarget.GetHex()));
