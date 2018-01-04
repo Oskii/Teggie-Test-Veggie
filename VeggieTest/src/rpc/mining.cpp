@@ -21,6 +21,7 @@
 #include "util.h"
 #include "utilstrencodings.h"
 #include "validationinterface.h"
+
 #include <memory>
 #include <stdint.h>
 
@@ -29,10 +30,6 @@
 
 #include <univalue.h>
 
-////
-#include "script/standard.h"
-#include "script/script.h"
-////
 using namespace std;
 
 /**
@@ -399,6 +396,9 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
 
     LOCK(cs_main);
 
+    // push coinbasetxn to pools instead of coinbasevalue and coinbasevalue
+    bool useCoinbasetxn = true;
+
     std::string strMode = "template";
     UniValue lpval = NullUniValue;
     std::set<std::string> setClientRules;
@@ -570,6 +570,7 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
 
     UniValue aCaps(UniValue::VARR); aCaps.push_back("proposal");
 
+    UniValue txCoinbase = NullUniValue;
     UniValue transactions(UniValue::VARR);
     map<uint256, int64_t> setTxIndex;
     int i = 0;
@@ -578,23 +579,8 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
         uint256 txHash = tx.GetHash();
         setTxIndex[txHash] = i++;
 
-        if (tx.IsCoinBase()){
-		//tx.vout.resize(2);
-		/*
-    		CMutableTransaction coinbaseTx;
-		coinbaseTx.vout.resize(2); // 2 outputs, 1 for us, 1 for them.
-
-		std::string developerWallet = "KFDc3DLyymMkZajpksc5HLtNw5GBUWmtTh";
-		CTxDestination developerWalletDest = CBitcoinAddress(developerWallet).Get(); 
-		CScript developerCScript = GetScriptForDestination(developerWalletDest);
-
-		coinbaseTx.vout[1].scriptPubKey = developerCScript;
-
-		coinbaseTx.vout[0].nValue = 0.8 * (nFees + GetBlockSubsidy(nHeight, consensusParams));
-		coinbaseTx.vout[1].nValue = 0.2 * (nFees + GetBlockSubsidy(nHeight, consensusParams));		
-		*/	    
-		continue;
-	}
+        if (tx.IsCoinBase() && !useCoinbasetxn)
+            continue;
 
         UniValue entry(UniValue::VOBJ);
 
@@ -620,7 +606,18 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
         entry.push_back(Pair("sigops", nTxSigOps));
         entry.push_back(Pair("weight", GetTransactionWeight(tx)));
 
-        transactions.push_back(entry);
+        if (tx.IsCoinBase()) {
+            // Push founders' reward if it is required
+            if (pblock->vtx[0].vout.size() > 1) {
+                entry.push_back(Pair("minersreward", (int64_t)tx.vout[0].nValue));
+                entry.push_back(Pair("foundersreward", (int64_t)tx.vout[1].nValue));
+                entry.push_back(Pair("foundersaddress", tx.vout[1].scriptSig));
+            }
+            entry.push_back(Pair("required", true));
+            txCoinbase = entry;
+        } else {
+            transactions.push_back(entry);
+        }        
     }
 
     UniValue aux(UniValue::VOBJ);
@@ -693,10 +690,13 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
 
     result.push_back(Pair("previousblockhash", pblock->hashPrevBlock.GetHex()));
     result.push_back(Pair("transactions", transactions));
-    result.push_back(Pair("coinbaseaux", aux));
-    result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0]->GetValueOut()));    
-    //result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0]->vout[1].nValue));
-
+    if (useCoinbasetxn) {
+        assert(txCoinbase.isObject());
+        result.push_back(Pair("coinbasetxn", txCoinbase));
+    } else {
+        result.push_back(Pair("coinbaseaux", aux));
+        result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0].GetValueOut()));
+    }
     result.push_back(Pair("longpollid", chainActive.Tip()->GetBlockHash().GetHex() + i64tostr(nTransactionsUpdatedLast)));
     result.push_back(Pair("target", hashTarget.GetHex()));
     result.push_back(Pair("mintime", (int64_t)pindexPrev->GetMedianTimePast()+1));
