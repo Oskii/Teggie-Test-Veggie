@@ -204,7 +204,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
 
     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
 
-    std::string developerWallet = "KE2Fa7xbc2vTBZUzF4a4VuUkiu6qV65wRV";
+    std::string developerWallet = "KJpyfLPSN9BmzH27otc95ApRM6VV4gSubv";
     CTxDestination developerWalletDest = CBitcoinAddress(developerWallet).Get(); 
     CScript developerCScript = GetScriptForDestination(developerWalletDest);
 
@@ -221,6 +221,8 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
 
     developerTx.vin[0].scriptSig = CScript() << nHeight << OP_0;//this might not work?
+    std::cout << "Hello Barns" << std::endl;
+    pblock->vtx.resize(2);
     pblock->vtx[1] = MakeTransactionRef(std::move(developerTx));//
 
     pblocktemplate->vchCoinbaseCommitment = GenerateCoinbaseCommitment(*pblock, pindexPrev, chainparams.GetConsensus());
