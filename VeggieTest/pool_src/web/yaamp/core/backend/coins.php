@@ -222,6 +222,22 @@ function BackendCoinsUpdate()
 				}
 			}
 
+			else if ($coin->symbol == 'VEGI' || $coin->rpcencoding == 'VEGI')
+			{
+				if($template && isset($template['coinbasetxn']))
+				{
+					// extract founders reward from coinbase transaction
+					$txn = $template['coinbasetxn'];
+					$coin->reward = arraySafeVal($txn,'minersreward',0)/100000000*$coin->reward_mul;
+					$coin->charity_amount = arraySafeVal($txn,'foundersreward',0)/100000000*$coin->reward_mul;
+					$coin->charity_address = arraySafeVal($txn,'foundersaddress', NULL);
+
+				} else {
+					$coin->auto_ready = false;
+					$coin->errors = $remote->error;
+				}
+			}			
+
 			else
 			{
 				$coin->auto_ready = false;
