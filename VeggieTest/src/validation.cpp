@@ -535,16 +535,16 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
         CTxDestination developerWalletDest = CBitcoinAddress(developerWallet).Get(); 
         CScript developerCScript = GetScriptForDestination(developerWalletDest);
         
-
-        if (block.vtx[1]->vout[1].scriptPubKey != developerCScript) {
-            return state.Invalid(error("ConnectBlock(): coinbase second output isn't to developer"),
-            REJECT_INVALID, "bad-cb-developer-script");
-        }
-        if (block.vtx[1]->vout[1].nValue < blockReward / 5) {
-            return state.Invalid(error("ConnectBlock(): coinbase pays too little to developer (actual=%d vs minimum=%d)",
-            block.vtx[1]->vout[1].nValue, blockReward / 5),
-            REJECT_INVALID, "bad-cb-developer-amount");
-        }
+	//coinbase needs two outputs
+        if(tx.vout.size() < 2)
+	{
+		return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-sizeinvalid");
+	}
+	//second output must have developer address
+	if(tx.vout[1].scriptPubKey != developerCScript)
+	{
+		return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-devoutputinvalid");
+	}
 
     }
     else
