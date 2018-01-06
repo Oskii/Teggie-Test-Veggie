@@ -550,7 +550,7 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
                 return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-fundoutputinvalid");
             }
             //second output must be at least 25% of first output (80 - 20)
-            if (tx.vout[1].nValue < tx.vout[0].nValue / 4)
+            if (tx.vout[1].nValue < (tx.vout[0].nValue / (4 + 1e-5)))
             {
                 return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-fundoutputtoosmall");                
             }
