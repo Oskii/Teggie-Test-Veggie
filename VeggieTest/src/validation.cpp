@@ -547,7 +547,12 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
             //second output must have developer address
             if (tx.vout[1].scriptPubKey != developerCScript)
             {
-                return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-devoutputinvalid");
+                return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-fundoutputinvalid");
+            }
+            //second output must be 20% of first output
+            if (tx.vout[1].nValue < tx.vout[0].nValue / 5)
+            {
+                return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-fundoutputtoosmall");                
             }
         }
 
