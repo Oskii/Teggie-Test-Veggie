@@ -536,7 +536,7 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
         CScript developerCScript = GetScriptForDestination(developerWalletDest);
         
         //New rules apply after block 10
-        if((int)chainActive.Height() > 10)
+        if((int)chainActive.Height() >= 10)
         {
             std::cout << std::endl << "Block 10 reached" << std::endl;
             //Coinbase needs two outputs
