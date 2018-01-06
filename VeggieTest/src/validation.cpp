@@ -535,16 +535,21 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
         CTxDestination developerWalletDest = CBitcoinAddress(developerWallet).Get(); 
         CScript developerCScript = GetScriptForDestination(developerWalletDest);
         
-	//coinbase needs two outputs
-        if(tx.vout.size() < 2)
-	{
-		return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-sizeinvalid");
-	}
-	//second output must have developer address
-	if(tx.vout[1].scriptPubKey != developerCScript)
-	{
-		return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-devoutputinvalid");
-	}
+        //New rules apply after block 10
+        if((int)chainActive.Height() > 10)
+        {
+            std::cout << std::endl << "Block 10 reached" << std::endl;
+            //Coinbase needs two outputs
+            if (tx.vout.size() < 2){
+                return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-sizeinvalid");
+            
+            }
+            //second output must have developer address
+            if (tx.vout[1].scriptPubKey != developerCScript)
+            {
+                return state.DoS(100, false, REJECT_INVALID, "bad-txns-vout-devoutputinvalid");
+            }
+        }
 
     }
     else
