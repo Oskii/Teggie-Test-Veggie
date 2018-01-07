@@ -7,6 +7,7 @@
 #include <cmath>
 #include "chainparams.h"
 #include "consensus/merkle.h"
+#include <validation.h>
 
 #include "tinyformat.h"
 #include "util.h"
@@ -85,8 +86,8 @@ public:
         consensus.BIP65Height = 0;
         consensus.BIP66Height = 0;
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = 10 * 60; // ten minutes
-        consensus.nPowTargetSpacing = 1 * 60;   // one minute
+        consensus.nPowTargetTimespan = (chainActive.Height() >= 17000) ? 10 * 60 : 14 * 24 * 60 * 60; // ten minutes for blocks over 17000 otherwise 2 weeks
+        consensus.nPowTargetSpacing = (chainActive.Height() >= 17000) ? 1 * 60 : 10 * 60;   // one minute for blocks over 17000 otherwise ten minutes
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = std::ceil(consensus.nMinerConfirmationWindow * 0.95); // 95% of nMinerConfirmationWindow	0
