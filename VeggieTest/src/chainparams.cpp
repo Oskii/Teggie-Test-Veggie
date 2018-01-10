@@ -356,7 +356,7 @@ const CChainParams &Params() {
 		modifiedPowTargetTimespan = 10 * 60; // 10 minutes
 		modifiedPowTargetSpacing = 1 * 60;   // 1 minute
 
-		mainParams.UpdateDifficultyAdjustmentParameters(modifiedPowTargetTimespan, modifiedPowTargetSpacing)
+		mainParams.UpdateDifficultyAdjustmentParameters(modifiedPowTargetSpacing, modifiedPowTargetTimespan)
 	}
 
     assert(pCurrentParams);
