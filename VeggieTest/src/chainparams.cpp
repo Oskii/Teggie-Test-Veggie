@@ -86,8 +86,8 @@ public:
         consensus.BIP65Height = 0;
         consensus.BIP66Height = 0;
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = (chainActive.Height() >= 17000) ? 10 * 60 : 14 * 24 * 60 * 60; // ten minutes for blocks over 17000 otherwise 2 weeks
-        consensus.nPowTargetSpacing = (chainActive.Height() >= 17000) ? 1 * 60 : 10 * 60;   // one minute for blocks over 17000 otherwise ten minutes
+        consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // ten minutes for blocks over 17000 otherwise 2 weeks
+        consensus.nPowTargetSpacing = 10 * 60;   // one minute for blocks over 17000 otherwise ten minutes
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = std::ceil(consensus.nMinerConfirmationWindow * 0.95); // 95% of nMinerConfirmationWindow	0
@@ -133,7 +133,6 @@ public:
     	
     	consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256S("0x0000794e30ec87650feebfdc5c39c51927ebb8407129ed5e93375dd825e50380"));
-        //assert(consensus.hashGenesisBlock == uint256S("0x00005bec991f54bc0426f0361a1392989d42c032c7854e8a6dd54be00c1fad0b"));
         assert(genesis.hashMerkleRoot == uint256S("0xf3209004efc0514df1c566add7764437d66e0ffaf87cdb6dc88b2c1453ebdc22"));
 
         // Note that of those with the service bits flag, most only support a subset of possible options
@@ -297,7 +296,7 @@ public:
         printf("REGTEST NET ========================================================= \n");
 
 
-	genesis = CreateGenesisBlock(GENESIS_TIME, 916716142, GENESIS_DIFFICULTY, 1, 50 * COIN);
+		genesis = CreateGenesisBlock(GENESIS_TIME, 916716142, GENESIS_DIFFICULTY, 1, 50 * COIN);
 	
         //MineGenesisBlock(genesis);
  
