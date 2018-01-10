@@ -5,9 +5,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include <math.h>
 #include <cmath>
+#include "chain.h"
 #include "chainparams.h"
 #include "consensus/merkle.h"
-#include <validation.h>
+#include "validation.h"
 
 #include "tinyformat.h"
 #include "util.h"
@@ -353,10 +354,10 @@ static CChainParams *pCurrentParams = 0;
 const CChainParams &Params() {
 
 	if (chainActive.Height() >= 17000) {
-		modifiedPowTargetTimespan = 10 * 60; // 10 minutes
-		modifiedPowTargetSpacing = 1 * 60;   // 1 minute
+		int64_t modifiedPowTargetTimespan = 10 * 60; // 10 minutes
+		int64_t modifiedPowTargetSpacing = 1 * 60;   // 1 minute
 
-		mainParams.UpdateDifficultyAdjustmentParameters(modifiedPowTargetSpacing, modifiedPowTargetTimespan)
+		mainParams.UpdateDifficultyAdjustmentParameters(modifiedPowTargetSpacing, modifiedPowTargetTimespan);
 	}
 
     assert(pCurrentParams);
