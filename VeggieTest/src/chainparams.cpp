@@ -86,8 +86,8 @@ public:
         consensus.BIP65Height = 0;
         consensus.BIP66Height = 0;
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // ten minutes for blocks over 17000 otherwise 2 weeks
-        consensus.nPowTargetSpacing = 10 * 60;   // one minute for blocks over 17000 otherwise ten minutes
+        consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // 2 weeks
+        consensus.nPowTargetSpacing = 10 * 60;   // 10 minutes
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = std::ceil(consensus.nMinerConfirmationWindow * 0.95); // 95% of nMinerConfirmationWindow	0
@@ -162,6 +162,12 @@ public:
 
         printf("Main net genesis: genesis is verified. \n");
     }
+
+	void UpdateDifficultyAdjustmentParameters(int64_t nPowTargetSpacing, int64_t nPowTargetTimespan)
+	{
+		consensus.nPowTargetSpacing = nPowTargetSpacing;
+		consensus.nPowTargetTimespan = nPowTargetTimespan;
+	}
 };
 static CMainParams mainParams;
 
@@ -345,6 +351,14 @@ static CRegTestParams regTestParams;
 static CChainParams *pCurrentParams = 0;
 
 const CChainParams &Params() {
+
+	if (chainActive.Height() >= 17000) {
+		modifiedPowTargetTimespan = 10 * 60; // 10 minutes
+		modifiedPowTargetSpacing = 1 * 60;   // 1 minute
+
+		mainParams.UpdateDifficultyAdjustmentParameters(modifiedPowTargetTimespan, modifiedPowTargetSpacing)
+	}
+
     assert(pCurrentParams);
     return *pCurrentParams;
 }
