@@ -35,7 +35,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& script
     txNew.vout.resize(1);
 
     unsigned int height = 0;
-    
+
     txNew.vin[0].scriptSig = CScript() << height << std::vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
     txNew.vout[0].nValue = genesisReward;
     txNew.vout[0].scriptPubKey = scriptPubKey;
@@ -62,7 +62,7 @@ static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits
 {
     const char* pszTimestamp = "iNews.co.uk 29/11/17 Animals do have feelings - and here's the science to prove it";
     const CScript scriptPubKey = CScript() << ParseHex("03facfdfc22816528518884608350d828e1403dd142d2276303b5b6da7a8b854a1") << OP_CHECKSIG;
-      
+
     return CreateGenesisBlock(pszTimestamp, scriptPubKey, nTime, nNonce, nBits, nVersion, genesisReward);
 }
 
@@ -124,14 +124,14 @@ public:
         pchMessageStart[3] = 0xd8;
         nDefaultPort = 22836; //maybe 22717
         nPruneAfterHeight = 100000;
-        
+
         printf("MAIN NET ========================================================= \n");
 
         //genesis = CreateGenesisBlock(GENESIS_TIME, 2317582475, GENESIS_DIFFICULTY, 1, 50 * COIN);
         genesis = CreateGenesisBlock(GENESIS_TIME, 2317976953, GENESIS_DIFFICULTY, 1, 50 * COIN);
-    	
+
         //MineGenesisBlock(genesis);
-    	
+
     	consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256S("0x0000794e30ec87650feebfdc5c39c51927ebb8407129ed5e93375dd825e50380"));
         assert(genesis.hashMerkleRoot == uint256S("0xf3209004efc0514df1c566add7764437d66e0ffaf87cdb6dc88b2c1453ebdc22"));
@@ -217,11 +217,11 @@ public:
         pchMessageStart[3] = 0x06;
         nDefaultPort = 32818;
         nPruneAfterHeight = 1000;
-        
+
         printf("TEST NET ========================================================= \n");
 
         genesis = CreateGenesisBlock(GENESIS_TIME, 44075569, GENESIS_DIFFICULTY, 1, 50 * COIN);
-	    
+
         //MineGenesisBlock(genesis);
 
         consensus.hashGenesisBlock = genesis.GetHash();
@@ -230,7 +230,7 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-       
+
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,196);
         base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,239);
@@ -304,9 +304,9 @@ public:
 
 
 		genesis = CreateGenesisBlock(GENESIS_TIME, 916716142, GENESIS_DIFFICULTY, 1, 50 * COIN);
-	
+
         //MineGenesisBlock(genesis);
- 
+
         consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256S("0x00002e473d4f041791f930d9d51419e4b35d5203457c64ac922680cc9b10962c"));
         assert(genesis.hashMerkleRoot == uint256S("0xf3209004efc0514df1c566add7764437d66e0ffaf87cdb6dc88b2c1453ebdc22"));
@@ -353,6 +353,8 @@ static CChainParams *pCurrentParams = 0;
 
 const CChainParams &Params() {
 
+	CChain chainActive;
+	std::cout << "chainActive height is: " << chainActive.Height() << std::endl;
 	if (chainActive.Height() >= 17000) {
 		int64_t modifiedPowTargetTimespan = 10 * 60; // 10 minutes
 		int64_t modifiedPowTargetSpacing = 1 * 60;   // 1 minute
@@ -386,31 +388,31 @@ void UpdateRegtestBIP9Parameters(Consensus::DeploymentPos d, int64_t nStartTime,
 {
     regTestParams.UpdateBIP9Parameters(d, nStartTime, nTimeout);
 }
- 
+
 void MineGenesisBlock(CBlock &genesis)
 {
   arith_uint256 best = arith_uint256();
   int n=0;
-  
+
   arith_uint256 hashTarget = arith_uint256().SetCompact(genesis.nBits);
   while (UintToArith256(genesis.GetHash()) > hashTarget) {
-    
+
     arith_uint256 c=UintToArith256(genesis.GetHash());
-    
+
     if(c < best || n==0)
       {
 	best = c;
 	n=1;
-	
+
     printf("%s %s %s\n",genesis.GetHash().GetHex().c_str(),hashTarget.GetHex().c_str(),
-	       best.GetHex().c_str()); 
+	       best.GetHex().c_str());
       }
-    
+
     ++genesis.nNonce;
     if (genesis.nNonce == 0) { ++genesis.nTime; }
   }
-  
+
   //printf("HASH IS: %s\n", UintToArith256(genesis.GetHash()).ToString().c_str());
 
-  printf("Converting genesis hash to string: %s\n",genesis.ToString().c_str());	
+  printf("Converting genesis hash to string: %s\n",genesis.ToString().c_str());
 }
