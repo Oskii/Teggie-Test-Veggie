@@ -353,7 +353,6 @@ static CChainParams *pCurrentParams = 0;
 
 const CChainParams &Params() {
 
-	CChain chainActive;
 	std::cout << "chainActive height is: " << chainActive.Height() << std::endl;
 	if (chainActive.Height() >= 17000) {
 		int64_t modifiedPowTargetTimespan = 10 * 60; // 10 minutes
