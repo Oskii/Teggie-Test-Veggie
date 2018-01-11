@@ -8,7 +8,7 @@
 #include "chain.h"
 #include "chainparams.h"
 #include "consensus/merkle.h"
-#include "validation.h"
+//#include "validation.h"
 
 #include "tinyformat.h"
 #include "util.h"
@@ -352,7 +352,10 @@ static CRegTestParams regTestParams;
 static CChainParams *pCurrentParams = 0;
 
 const CChainParams &Params() {
-
+	
+	//extern 
+	CChain chainActive;
+	std::cout << "chainActive height is: " << chainActive.Height() << std::endl;
 	if (chainActive.Height() >= 17000) {
 		int64_t modifiedPowTargetTimespan = 10 * 60; // 10 minutes
 		int64_t modifiedPowTargetSpacing = 1 * 60;   // 1 minute

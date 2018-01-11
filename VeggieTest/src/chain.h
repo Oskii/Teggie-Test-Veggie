@@ -420,6 +420,7 @@ private:
     std::vector<CBlockIndex*> vChain;
 
 public:
+
     /** Returns the index entry for the genesis block of this chain, or NULL if none. */
     CBlockIndex *Genesis() const {
         return vChain.size() > 0 ? vChain[0] : NULL;

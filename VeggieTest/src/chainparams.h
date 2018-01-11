@@ -10,7 +10,7 @@
 #include "consensus/params.h"
 #include "primitives/block.h"
 #include "protocol.h"
-
+#include "chain.h"
 #include <vector>
 
 struct CDNSSeedData {
@@ -43,6 +43,7 @@ struct ChainTxData {
  * a regression test mode which is intended for private networks only. It has
  * minimal difficulty to ensure that blocks can be found instantly.
  */
+
 class CChainParams
 {
 public:
@@ -77,6 +78,7 @@ public:
     const std::vector<SeedSpec6>& FixedSeeds() const { return vFixedSeeds; }
     const CCheckpointData& Checkpoints() const { return checkpointData; }
     const ChainTxData& TxData() const { return chainTxData; }
+
 protected:
     CChainParams() {}
 
@@ -96,6 +98,8 @@ protected:
     CCheckpointData checkpointData;
     ChainTxData chainTxData;
 };
+
+extern CChain chainActive;
 
 /**
  * Return the currently selected parameters. This won't change after app
