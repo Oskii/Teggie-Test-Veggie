@@ -352,15 +352,6 @@ static CRegTestParams regTestParams;
 static CChainParams *pCurrentParams = 0;
 
 const CChainParams &Params() {
-
-	std::cout << "chainActive height is: " << chainActive.Height() << std::endl;
-	if (chainActive.Height() >= 17000) {
-		int64_t modifiedPowTargetTimespan = 10 * 60; // 10 minutes
-		int64_t modifiedPowTargetSpacing = 1 * 60;   // 1 minute
-
-		mainParams.UpdateDifficultyAdjustmentParameters(modifiedPowTargetSpacing, modifiedPowTargetTimespan);
-	}
-
     assert(pCurrentParams);
     return *pCurrentParams;
 }
@@ -414,4 +405,16 @@ void MineGenesisBlock(CBlock &genesis)
   //printf("HASH IS: %s\n", UintToArith256(genesis.GetHash()).ToString().c_str());
 
   printf("Converting genesis hash to string: %s\n",genesis.ToString().c_str());
+}
+
+
+void SetDifficultyAdjustmentParams(int nHeight)
+{
+	std::cout << "chainActive height is: " << nHeight << std::endl;
+	if (nHeight >= 17000) {
+		int64_t modifiedPowTargetTimespan = 10 * 60; // 10 minutes
+		int64_t modifiedPowTargetSpacing = 1 * 60;   // 1 minute
+
+		mainParams.UpdateDifficultyAdjustmentParameters(modifiedPowTargetSpacing, modifiedPowTargetTimespan);
+	}
 }
