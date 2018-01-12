@@ -411,7 +411,7 @@ void MineGenesisBlock(CBlock &genesis)
 void SetDifficultyAdjustmentParams(int nHeight)
 {
 	std::cout << "chainActive height is: " << nHeight << std::endl;
-	if (nHeight >= 17000) {
+	if (nHeight >= 50) {
 		int64_t modifiedPowTargetTimespan = 10 * 60; // 10 minutes
 		int64_t modifiedPowTargetSpacing = 1 * 60;   // 1 minute
 
